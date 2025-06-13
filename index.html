@@ -8,36 +8,29 @@
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
   </script>
   <style>
-    /* Aseguramos que el viewer ocupe toda la pantalla */
-    body {
-      margin: 0;
-      height: 100vh;
-      overflow: hidden;
-    }
+    /* Este estilo obliga a que el botón AR interno aparezca */
     model-viewer {
+      --ar-button-display: block;
       width: 100%;
-      height: 100%;
+      height: 100vh;
       display: block;
-      position: relative;      /* Para posicionar el botón encima */
-      touch-action: none;      /* Evita gestos que muevan el botón */
+      position: relative;   /* Para posicionar el ::part */
+      overflow: hidden;
+      touch-action: none;
     }
-    /* Intervenimos el botón interno de AR */
-    model-viewer::part(ar-button) {
-      position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      z-index: 9999 !important;        /* Sobre todo lo demás */
-      pointer-events: auto !important; /* Habilita clic */
-      
-      /* Opcionales: ajusta apariencia */
-      padding: 12px 24px !important;
-      font-size: 16px !important;
-      background: rgba(0, 0, 0, 0.7) !important;
-      color: #fff !important;
-      border: none !important;
+
+    /* Reposiciona el botón por defecto (parte default-ar-button) al centro */
+    model-viewer::part(default-ar-button) {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      pointer-events: auto;  /* Lo hace clicable */
+      /* Ajustes visuales opcionales */
+      padding: 12px !important;
+      background: rgba(0,0,0,0.7) !important;
       border-radius: 4px !important;
-      cursor: pointer !important;
     }
   </style>
 </head>
@@ -56,17 +49,11 @@
   <script>
     const TARGET = 'https://www.nexustours.com?utm_source=nexusNFC&utm_medium=AR&utm_campaign=CUN-NFC';
     let timerStarted = false;
-
     function startRedirectTimer() {
       if (timerStarted) return;
       timerStarted = true;
-      console.log('▶️ Iniciando timer de 15 s para redirección');
-      setTimeout(() => {
-        console.log('🔄 Redirigiendo a:', TARGET);
-        window.location.href = TARGET;
-      }, 15000);
+      setTimeout(() => window.location.href = TARGET, 15000);
     }
-
     const viewer = document.getElementById('miModelo');
     viewer.addEventListener('ar-start', startRedirectTimer);
     window.addEventListener('load', startRedirectTimer);
