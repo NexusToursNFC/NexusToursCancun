@@ -8,6 +8,7 @@
     src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
   </script>
   <style>
+    /* Aseguramos que el viewer ocupe toda la pantalla */
     body {
       margin: 0;
       height: 100vh;
@@ -17,14 +18,19 @@
       width: 100%;
       height: 100%;
       display: block;
-      position: relative;
+      position: relative;      /* Para posicionar el botón encima */
+      touch-action: none;      /* Evita gestos que muevan el botón */
     }
-    /* Centrar el botón AR interno */
+    /* Intervenimos el botón interno de AR */
     model-viewer::part(ar-button) {
       position: absolute !important;
       top: 50% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
+      z-index: 9999 !important;        /* Sobre todo lo demás */
+      pointer-events: auto !important; /* Habilita clic */
+      
+      /* Opcionales: ajusta apariencia */
       padding: 12px 24px !important;
       font-size: 16px !important;
       background: rgba(0, 0, 0, 0.7) !important;
@@ -62,18 +68,8 @@
     }
 
     const viewer = document.getElementById('miModelo');
-
-    // Cuando arranque AR
-    viewer.addEventListener('ar-start', () => {
-      console.log('✅ Evento ar-start capturado');
-      startRedirectTimer();
-    });
-
-    // Fallback si no usan AR o ar-start no llega
-    window.addEventListener('load', () => {
-      console.log('✅ Página cargada → fallback de timer');
-      startRedirectTimer();
-    });
+    viewer.addEventListener('ar-start', startRedirectTimer);
+    window.addEventListener('load', startRedirectTimer);
   </script>
 </body>
 </html>
